@@ -58,7 +58,7 @@ wire [9:0] pixel_y;   // y coordinate of the next pixel (between 0 ~ 479)
   
 reg  [11:0] rgb_reg;  // RGB value for the current pixel
 reg  [11:0] rgb_next; // RGB value for the next pixel
-  
+
 // Application-specific VGA signals
 reg  [17:0] pixel_addr;
 
