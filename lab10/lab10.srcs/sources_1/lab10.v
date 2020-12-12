@@ -40,9 +40,9 @@ wire [9:0]  pos;
 wire        fish_region;
 
 // declare SRAM control signals
-wire [16:0] sram_addr, sram_addr_seabed;
+wire [16:0] sram_addr, sram_addr_fish1;
 wire [11:0] data_in;
-wire [11:0] data_out, data_out_seabed;
+wire [11:0] data_out, data_out_fish1;
 wire        sram_we, sram_en;
 
 // General VGA control signals
@@ -60,7 +60,7 @@ reg  [11:0] rgb_reg;  // RGB value for the current pixel
 reg  [11:0] rgb_next; // RGB value for the next pixel
 
 // Application-specific VGA signals
-reg  [17:0] pixel_addr, pixel_addr_seabed;
+reg  [17:0] pixel_addr, pixel_addr_fish1;
 
 // Declare the video buffer size
 localparam VBUF_W = 320; // video buffer width
@@ -76,8 +76,8 @@ reg [17:0] fish_addr[0:2];   // Address array for up to 8 fish images.
 // Note: System Verilog has an easier way to initialize an array,
 //       but we are using Verilog 2001 :(
 initial begin
-  fish_addr[0] = VBUF_W*VBUF_H + 18'd0;         /* Addr for fish image #1 */
-  fish_addr[1] = VBUF_W*VBUF_H + FISH_W*FISH_H; /* Addr for fish image #2 */
+  fish_addr[0] = 18'd0;//VBUF_W*VBUF_H + 18'd0;         /* Addr for fish image #1 */
+  fish_addr[1] = FISH_W*FISH_H;//VBUF_W*VBUF_H + FISH_W*FISH_H; /* Addr for fish image #2 */
 end
 
 // Instiantiate the VGA sync signal generator
@@ -95,21 +95,23 @@ clk_divider#(2) clk_divider0(
 
 // ------------------------------------------------------------------------
 // The following code describes an initialized SRAM memory block that
-// stores a 320x240 12-bit seabed image, plus two 64x32 fish images.
-sram #(.DATA_WIDTH(12), .ADDR_WIDTH(18), .RAM_SIZE(VBUF_W*VBUF_H+FISH_W*FISH_H*2), .FILE_NAME("images.mem"))
+// stores a 320x240 12-bit fish1 image, plus two 64x32 fish images.
+// VBUF_W*VBUF_H+
+// FISH_W*FISH_H*2
+sram_seabed #(.DATA_WIDTH(12), .ADDR_WIDTH(18), .RAM_SIZE(VBUF_W*VBUF_H))
   ram0 (.clk(clk), .we(sram_we), .en(sram_en),
           .addr(sram_addr), .data_i(data_in), .data_o(data_out));
 
-sram #(.DATA_WIDTH(12), .ADDR_WIDTH(18), .RAM_SIZE(VBUF_W*VBUF_H), .FILE_NAME("seabed.mem"))
+sram #(.DATA_WIDTH(12), .ADDR_WIDTH(18), .RAM_SIZE(FISH_W*FISH_H*6))
   ram1 (.clk(clk), .we(sram_we), .en(sram_en),
-          .addr(sram_addr_seabed), .data_i(data_in), .data_o(data_out_seabed));
-
+          .addr(sram_addr_fish1), .data_i(data_in), .data_o(data_out_fish1));
+// 3435
 assign sram_we = usr_btn[3]; // In this demo, we do not write the SRAM. However, if
                              // you set 'sram_we' to 0, Vivado fails to synthesize
                              // ram0 as a BRAM -- this is a bug in Vivado.
 assign sram_en = 1;          // Here, we always enable the SRAM block.
 assign sram_addr = pixel_addr;
-assign sram_addr_seabed = pixel_addr_seabed;
+assign sram_addr_fish1 = pixel_addr_fish1;
 assign data_in = 12'h000; // SRAM is read-only so we tie inputs to zeros.
 // End of the SRAM memory block.
 // ------------------------------------------------------------------------
@@ -145,10 +147,10 @@ assign fish_region =
 always @ (posedge clk) begin
   if (~reset_n)
     pixel_addr <= 0;
-  else if (fish_region)
-    pixel_addr <= fish_addr[fish_clock[23]] +
-                  ((pixel_y>>1)-FISH_VPOS)*FISH_W +
-                  ((pixel_x +(FISH_W*2-1)-pos)>>1);
+//  else if (fish_region)
+    // pixel_addr <= fish_addr[fish_clock[23]] +
+    //               ((pixel_y>>1)-FISH_VPOS)*FISH_W +
+    //               ((pixel_x +(FISH_W*2-1)-pos)>>1);
   else
     // Scale up a 320x240 image for the 640x480 display.
     // (pixel_x, pixel_y) ranges from (0,0) to (639, 479)
@@ -156,8 +158,12 @@ always @ (posedge clk) begin
 end
 
 always @ (posedge clk) begin
-  if (~reset_n) pixel_addr_seabed <= 0;
-  else pixel_addr_seabed <= (pixel_y >> 1) * VBUF_W + (pixel_x >> 1);
+  if (~reset_n) pixel_addr_fish1 <= 0;
+  else if (fish_region)
+    pixel_addr_fish1 <= fish_addr[fish_clock[23]] +
+                      ((pixel_y>>1)-FISH_VPOS)*FISH_W +
+                      ((pixel_x +(FISH_W*2-1)-pos)>>1);
+  else pixel_addr_fish1 <= (pixel_y >> 1) * VBUF_W + (pixel_x >> 1);
 end
 // End of the AGU code.
 // ------------------------------------------------------------------------
@@ -171,12 +177,12 @@ end
 always @(*) begin
   if (~video_on)
     rgb_next = 12'h000; // Synchronization period, must set RGB values to zero.
-  else begin
-    if (fish_region) begin
-      if (data_out == 12'h0f0) rgb_next = data_out_seabed;
+  // else begin
+  //   if (fish_region) begin
+  //     if (data_out == 12'h0f0) rgb_next = data_out_;
       else rgb_next = data_out; // RGB value at (pixel_x, pixel_y)
-    end
-  end
+  //   end
+  // end
 end
 // End of the video data display code.
 // ------------------------------------------------------------------------
