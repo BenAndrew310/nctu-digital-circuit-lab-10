@@ -91,10 +91,16 @@ read_mem {
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/images.mem
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/seabed.mem
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/fish1.mem
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/fish2.mem
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/fish3.mem
 }
 read_verilog -library xil_defaultlib {
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/clk_divider.v
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram.v
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram_fish1c.v
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram_fish1d.v
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram_fish2.v
+  C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram_fish3.v
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/sram_seabed.v
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/vga_sync.v
   C:/Users/Shlab24/Desktop/nctu-digital-circuit-lab-10/lab10/lab10.srcs/sources_1/lab10.v

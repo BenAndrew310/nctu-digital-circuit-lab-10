@@ -16,7 +16,7 @@ void usage(char *arg, FILE *fp)
 {
     fprintf(stderr, "\nConvert several ppm images into a single Verilog memory file.\n", arg);
     fprintf(stderr, "Usage: %1 input1.ppm input2.ppm ... \n", arg);
-    fprintf(stderr, "Note: the output is fish1.mem\n");
+    fprintf(stderr, "Note: the output is fish3.mem\n");
     if (fp != NULL) fclose(fp);
     exit(-1);
 }
@@ -61,9 +61,9 @@ int main(int argc, char **argv)
         else
             fclose(fp);
 
-        if ((ofp = fopen("fish1.mem", "at")) == NULL)
+        if ((ofp = fopen("fish3.mem", "at")) == NULL)
         {
-            fprintf(stderr, "%s: output file 'fish1.mem' open error.\n", *argv);
+            fprintf(stderr, "%s: output file 'fish3.mem' open error.\n", *argv);
             return -1;
         }
         for (idx = 0; idx < width*height; idx++)
